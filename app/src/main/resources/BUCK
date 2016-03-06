@@ -1,0 +1,32 @@
+import re
+
+jar_deps = []
+for jarfile in glob(['libs/*.jar']):
+  name = 'jars__' + re.sub(r'^.*/([^/]+)\.jar$', r'\1', jarfile)
+  jar_deps.append(':' + name)
+  prebuilt_jar(
+    name = name,
+    binary_jar = jarfile,
+  )
+
+android_library(
+  name = 'all-jars',
+  exported_deps = jar_deps,
+  visibility = ['PUBLIC']
+)
+
+android_prebuilt_aar(
+  name = 'appcompat',
+  aar = 'libs/appcompat-v7-23.1.0.aar',
+  visibility = [ 'PUBLIC' ],
+)
+
+android_resource(
+  name = 'res',
+  res = 'res',
+  package = 'com.example.gradletobuck',
+  visibility = [ 'PUBLIC' ],
+  deps = [
+  ':appcompat',
+  ],
+)
